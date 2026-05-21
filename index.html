@@ -189,9 +189,41 @@ ul.clean-list{padding-left:0;list-style:none;margin:10px 0 18px}
 ul.clean-list li{display:flex;gap:8px;align-items:flex-start;padding:5px 0;font-size:14px;color:#374151;line-height:1.6;border-bottom:1px solid var(--border)}
 ul.clean-list li:last-child{border-bottom:none}
 ul.clean-list li::before{content:"→";color:var(--accent2);font-weight:600;flex-shrink:0;margin-top:1px}
+
+/* ── RESPONSIVE MÓVIL ── */
+#menu-toggle{
+  display:none;position:fixed;top:12px;left:12px;z-index:1000;
+  width:40px;height:40px;border-radius:10px;border:none;
+  background:var(--accent);color:#fff;font-size:20px;cursor:pointer;
+  align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(124,58,237,.35);
+}
+#sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:998;
+}
+@media(max-width:768px){
+  #menu-toggle{display:flex}
+  #sidebar{
+    position:fixed;left:-280px;top:0;height:100%;z-index:999;
+    width:280px;min-width:280px;
+    transition:left .25s ease;
+    box-shadow:4px 0 20px rgba(0,0,0,.15);
+  }
+  #sidebar.open{left:0}
+  #sidebar-overlay.open{display:block}
+  #main{width:100%;padding-top:56px}
+  .content-wrap{padding:16px}
+  .topic-content h1{font-size:18px}
+  .topic-content h2{font-size:15px}
+  .topic-content pre{font-size:12px;overflow-x:auto}
+  .mod-cards{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
+
+<!-- BOTÓN MENÚ MÓVIL -->
+<button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- SIDEBAR -->
 <nav id="sidebar">
@@ -2520,6 +2552,16 @@ minified = json.<span class="fn">dumps</span>(data, separators=(<span class="str
 </div><!-- /templates -->
 
 <script>
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeSidebarOnMobile(){
+  if(window.innerWidth<=768){
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+  }
+}
 const LESSONS = {
   archivos: {
     title: 'Manipulación de archivos',
@@ -2677,6 +2719,7 @@ function showLesson(lessonId, btn, modName, lessonName){
   const lesson = LESSONS[lessonId];
   if(!lesson) return;
 
+  closeSidebarOnMobile();
   document.getElementById('view-home').style.display = 'none';
   const vl = document.getElementById('view-lesson');
   vl.style.display = 'block';
